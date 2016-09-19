@@ -1,0 +1,282 @@
+<div class="row">
+    <div class="col-xs-12 col-xs-12">
+        <div class="widget radius-bordered">
+            <div class="widget-header bg-blue">
+                <i class="widget-icon fa fa-arrow-down"></i>
+                <span class="widget-caption">图表分析</span>
+                <div class="widget-buttons">
+                    <a href="#" data-toggle="maximize">
+                        <i class="fa fa-expand"></i>
+                    </a>
+                    <a href="#" data-toggle="collapse">
+                        <i class="fa fa-minus"></i>
+                    </a>
+                    <a href="#" data-toggle="dispose">
+                        <i class="fa fa-times"></i>
+                    </a>
+                </div>
+            </div>
+            <div class="widget-body" style="text-align:center">
+            <h3></h3>
+                <div id="orders" style="height:600px;"></div>
+                <h3></h3>
+                <div id="vips" style="height:500px;"></div>
+                <div id="vipbuy" style="height:500px; width:500px;margin:auto"></div>
+                <div id="area" style="height:700px; width:1000px;margin:auto"></div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- 图表封装 -->
+<script src="__PUBLIC__/Admin/js/echarts.js"></script>
+<script src="__PUBLIC__/Admin/js/china.js"></script>
+ <script type="text/javascript">
+    // 基于准备好的dom，初始化echarts实例
+    var myChart = echarts.init(document.getElementById('orders'));
+        myChart.showLoading();
+        // 获取数据
+        $.get("{:U('getcharts')}").done(function(data){
+            myChart.hideLoading();
+            // 指定图表的配置项和数据
+            option = {
+                title: {
+                    text: '30天订单统计图'
+                },
+                tooltip: {
+                    trigger: 'axis'
+                },
+                legend: {
+                    data:['交易完成','未付款','交易关闭','退货','已付款']
+                },
+                grid: {
+                    left: '3%',
+                    right: '4%',
+                    bottom: '3%',
+                    containLabel: true
+                },
+                toolbox: {
+                    feature: {
+                        saveAsImage: {}
+                    }
+                },
+                xAxis: {
+                    type: 'category',
+                    boundaryGap: false,
+                    data: data.orderNotpay.days
+                },
+                yAxis: {
+                    type: 'value'
+                },
+                series: [
+                    {
+                        name:'交易完成',
+                        type:'line',
+                        stack: '总量',
+                        data:data.orderDone.reg
+                    },
+                    {
+                        name:'未付款',
+                        type:'line',
+                        stack: '总量',
+                        data:data.orderNotpay.reg
+                    },
+                    {
+                        name:'交易关闭',
+                        type:'line',
+                        stack: '总量',
+                        data:data.orderClose.reg
+                    },
+                    {
+                        name:'退货',
+                        type:'line',
+                        stack: '总量',
+                        data:data.orderReturn.reg
+                    },
+                    {
+                        name:'已付款',
+                        type:'line',
+                        stack: '总量',
+                        data:data.orderPay.reg
+                    }
+                ]
+            };
+           $('h3').eq(0).html('交易完成总数:'+data.orderDone.totalnum+';&nbsp&nbsp未付款总数:'+data.orderNotpay.totalnum+';&nbsp&nbsp交易关闭总数:'+data.orderClose.totalnum+';&nbsp&nbsp退货总数:'+data.orderReturn.totalnum+';&nbsp&nbsp已付款总数:'+data.orderPay.totalnum);
+            myChart.setOption(option);
+        })
+
+    var vipChart = echarts.init(document.getElementById('vips'));
+    vipChart.showLoading();
+    $.get("{:U('getVipcharts')}").done(function(vips){
+         vipChart.hideLoading();
+         option = {
+                title: {
+                    text: '30天用户关注-取消关注'
+                },
+                tooltip: {
+                    trigger: 'axis'
+                },
+                legend: {
+                    data:['关注数','取消关注']
+                },
+                grid: {
+                    left: '3%',
+                    right: '4%',
+                    bottom: '3%',
+                    containLabel: true
+                },
+                toolbox: {
+                    feature: {
+                        saveAsImage: {}
+                    }
+                },
+                xAxis: {
+                    type: 'category',
+                    boundaryGap: false,
+                    data: vips.days
+                },
+                yAxis: {
+                    type: 'value'
+                },
+                series: [
+                    {
+                        name:'关注数',
+                        type:'line',
+                        stack: '总量',
+                        data:vips.sub.reg
+                    },
+                    {
+                        name:'取消关注',
+                        type:'line',
+                        stack: '总量',
+                        data:vips.unsub.reg
+                    },
+                ]
+            };
+            $('h3').eq(1).html('关注总数:'+vips.sub.totalnum+';&nbsp&nbsp取消关注总数:'+vips.unsub.totalnum);
+        vipChart.setOption(option);
+    });
+    var vipbuyChart = echarts.init(document.getElementById('vipbuy'));
+        vipbuyChart.showLoading();
+        $.get("{:U('getVipbuy')}").done(function(data){
+            vipbuyChart.hideLoading();
+
+            option = {
+                tooltip: {
+                    trigger: 'item',
+                    formatter: "{a} <br/>{b}: {c} ({d}%)"
+                },
+                legend: {
+                    orient: 'vertical',
+                    x: 'left',
+                    data:['购买1次:'+data.one+'人','购买2次:'+data.two+'人','购买3次:'+data.three+'人','3次以上:'+data.more+'人']
+                },
+                series: [
+                    {
+                        name:'购买次数',
+                        type:'pie',
+                        radius: ['50%', '70%'],
+                        avoidLabelOverlap: false,
+                        label: {
+                            normal: {
+                                show: false,
+                                position: 'center'
+                            },
+                            emphasis: {
+                                show: true,
+                                textStyle: {
+                                    fontSize: '30',
+                                    fontWeight: 'bold'
+                                }
+                            }
+                        },
+                        labelLine: {
+                            normal: {
+                                show: false
+                            }
+                        },
+                        data:[
+                            {value:data.one, name:'购买1次:'+data.one+'人'},
+                            {value:data.two, name:'购买2次:'+data.two+'人'},
+                            {value:data.three, name:'购买3次:'+data.three+'人'},
+                            {value:data.more, name:'3次以上:'+data.more+'人'},
+                        ]
+                    }
+                ]
+            };
+            vipbuyChart.setOption(option);
+        });
+        var areaChart = echarts.init(document.getElementById('area'));
+        areaChart.showLoading();
+        $.get("{:U('getArea')}").done(function(data){
+            console.log(data);
+            areaChart.hideLoading();
+            option = {
+                title: {
+                    text: '区域销量',
+                    subtext: '小海家辣椒酱',
+                    left: 'center'
+                },
+                tooltip: {
+                    trigger: 'item'
+                },
+                legend: {
+                    orient: 'vertical',
+                    left: 'left',
+                    data:['购买数'+data.buyall,]
+                },
+                visualMap: {
+                    min: 0,
+                    max: data.buyall,
+                    left: 'left',
+                    top: 'bottom',
+                    text: ['数量多','数量少'],           // 文本，默认为数值文本
+                    calculable: true
+                },
+                toolbox: {
+                    show: true,
+                    orient: 'vertical',
+                    left: 'right',
+                    top: 'center',
+                    feature: {
+                        dataView: {readOnly: false},
+                        restore: {},
+                        saveAsImage: {}
+                    }
+                },
+                series: [
+                    // {
+                    //     name: '订单数'+data.orderall,
+                    //     type: 'map',
+                    //     mapType: 'china',
+                    //     roam: false,
+                    //     label: {
+                    //         normal: {
+                    //             show: true
+                    //         },
+                    //         emphasis: {
+                    //             show: true
+                    //         }
+                    //     },
+                    //     data:data.order
+                        
+                    // },
+                    {
+                        name: '购买数'+data.buyall,
+                        type: 'map',
+                        mapType: 'china',
+                        label: {
+                            normal: {
+                                show: true
+                            },
+                            emphasis: {
+                                show: true
+                            }
+                        },
+                        data:data.buy
+                    }
+                    ]
+                }
+                      areaChart.setOption(option);
+                    })
+    </script>
+<!-- /图表封装 -->

@@ -1,0 +1,221 @@
+<!doctype html>
+<html>
+
+<head>
+    <title>评价</title>
+    <meta charset="utf-8" />
+    <!--页面优化-->
+    <meta name="MobileOptimized" content="320">
+    <!--默认宽度320-->
+    <meta name="viewport" content="width=device-width,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no" />
+    <!--viewport 等比 不缩放-->
+    <meta http-equiv="cleartype" content="on">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <!--删除苹果菜单-->
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <!--默认颜色-->
+    <meta name="apple-mobile-web-app-title" content="yes">
+    <meta name="apple-touch-fullscreen" content="yes">
+    <!--加载全部后 显示-->
+    <meta content="telephone=no" name="format-detection" />
+    <!--不识别电话-->
+    <meta content="email=no" name="format-detection" />
+    <link href="__PUBLIC__/Admin/css/bootstrap.min.css" rel="stylesheet">  
+    <link href="__PUBLIC__/App/css/star-rating.min.css" media="all" rel="stylesheet" type="text/css"/>    
+    <link rel="stylesheet" href="__PUBLIC__/App/css/style.css" />
+    <!--组件依赖js begin-->
+    <script src="__PUBLIC__/App/js/zepto.min.js"></script>
+    <script src="__PUBLIC__/Admin/js/jquery-2.0.3.min.js"></script>
+    <!-- 组件依赖js end -->
+   
+    <!-- <script type="text/javascript" src="__PUBLIC__/App/gmu/gmu.min.js"></script> -->
+    <!-- <script type="text/javascript" src="__PUBLIC__/App/gmu/app-basegmu.js"></script> -->
+    <script src="__PUBLIC__/App/js/star-rating.min.js" type="text/javascript"></script>
+    <!-- <script src="__PUBLIC__/App/js/ajaxfileupload.js" type="text/javascript"></script> -->
+    <script type="text/javascript" src="__PUBLIC__/App/js/jquery.wallform.js"></script>
+</head>
+<style type="text/css">
+.pics{min-height:150px;}
+.preview{width:20%;border:solid 1px #dedede; margin:10px;}
+.demo p{line-height:26px}
+.btn{
+    position: relative;
+}
+.btn input {
+    position: absolute;
+    top: 0; 
+    right: 0;
+    margin: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 999;
+    border: solid transparent;
+    cursor: pointer;
+    /*display: none;*/
+    opacity: 0;
+}
+#toRev{
+    display: none;
+}
+</style>
+<body>
+<div class="btm width90">
+    <div">
+        <!-- 商品明细  -->
+        <div class="ads-lst ovflw mr-b back2">
+            <p class="ads_ortt3 fonts18 lst-mr" style="color:#C70D1E">请选择分数
+            </p>
+            <p class="ads_ortt3 fonts18 lst-mr goodsMark">辣椒酱:
+            <span class="inline-b"><input id="input-21f" value="0" type="number" class="rating" min=0 max=5 step=0.5 data-size="xd" ></span>
+            </p>
+            <p class="ads_ortt3 fonts18 lst-mr serverMark">服&nbsp;&nbsp;&nbsp;务:
+            <span class="inline-b"><input id="input-21f" value="0" type="number" class="rating" min=0 max=5 step=0.5 data-size="xd" ></span>
+            </p>
+            <p class=" ads_ortt3 fonts18 lst-mr deliveryMark">快&nbsp;&nbsp;&nbsp;递:
+            <span class="inline-b"><input id="input-21f" value="0" type="number" class="rating" min=0 max=5 step=0.5 data-size="xd" ></span>
+            </p>
+            
+            <p class="ads">
+            <textarea name="revcontent" rows="5" required class="width90 btm lst-mr color2" onKeyDown="" onKeyUp="" onfocus="if(value=='对小海家的辣椒酱你怎么看'){value=''}" onblur="if (value ==''){value='对小海家的辣椒酱你怎么看'}" id="com">对小海家的辣椒酱你怎么看</textarea>
+                
+            </p>
+            <p class=" ads_ortt3 fonts18 lst-mr">晒图<span style="font-size:12px;">(点击已上传图片可以删掉)</span>
+            </p>  
+        </div>
+        <div class="pics width90">
+        <div id="preview"></div>
+            <form id="imageform" method="post" enctype="multipart/form-data" action="{:U('Upload/uploadOSS')}">
+                <div id="up_status" style="display:none;width:80%"><img src="__PUBLIC__/App/img/loader.gif" alt="uploading"/></div>
+                <div id="up_btn" class="btn">
+                    <img src="__PUBLIC__/App/img/pic.png" alt="">
+                    <input id="photoimg" type="file" name="upfile">
+                </div>
+            </form>
+        </div>
+        </div>
+    
+    <!-- //提交的内容 -->
+    <div id="toRev" data-goodsmark="5" data-deliverymark="5" data-servermark="5" data-goodsid="{$goodsid}" data-orderid="{$orderid}">  
+    </div>  
+</div>   
+    <div class="insert1"></div>
+    <div class="dtl-ft ovflw">
+        <a href="#" class="fonts18 color-g width50 btm" id="orderconfirm">立&nbsp;即&nbsp;评&nbsp;价</a>
+    </div>
+
+    <script type="text/javascript">
+    $('#orderconfirm').on('click', function() {
+        if ($('#com').val()=='对小海家的辣椒酱你怎么看') {
+            alert('请填写评价内容');
+            return false;
+        }
+        //循环图片:
+        var revpic='';
+        if ($('#preview').html()) {
+            $('.preview').each(function(){
+                $picid=$(this).data('picid');
+                revpic+=$picid+',';
+            })
+        }
+        
+        var okfun = function() {
+            var data={
+                'goodsmark':$('#toRev').data('goodsmark'),
+                'deliverymark':$('#toRev').data('deliverymark'),
+                'servermark':$('#toRev').data('servermark'),
+                'orderid':$('#toRev').data('orderid'),
+                'goodsid':$('#toRev').data('goodsid'),
+                'revcontent':$('#com').val(),
+                'revpic':revpic
+            };
+                $.post("{:U('Shop/reviews')}",data,function(msg){
+                    if (msg) {
+                        alert('评论成功');
+                        window.location.href="{:U('orderList',array('sid'=>0))}";
+                    }else{
+                        alert('评论失败,请检查网络');
+                    }
+                },'json');
+    
+            }
+        okfun();
+    });
+
+    $(function(){  
+    // //点击打开文件选择器  
+    //     $("#upload").on('click', function() {  
+    //         $('#fileToUpload').click();  
+    //     });  
+          
+        //选择文件之后执行上传 
+            $('#photoimg').on('change', function(){ 
+                var status = $("#up_status"); 
+                var btn = $("#up_btn"); 
+                $("#imageform").ajaxForm({ 
+                    target: '#preview',  
+                    beforeSubmit:function(){ 
+                        status.show(); 
+                        btn.hide(); 
+                    },  
+                    success:function(){ 
+                        status.hide(); 
+                        btn.show(); 
+                    },  
+                    error:function(){ 
+                        status.hide(); 
+                        btn.show(); 
+                        alert('上传失败,请检查网络');
+                } }).submit(); 
+            }); 
+     
+        // $('#fileToUpload').on('change', function() {  
+        //     $.ajaxFileUpload({  
+        //         url:"{:U('Upload/uploadOSS')}",  
+        //         secureuri:false,
+        //         type:'post',  
+        //         fileElementId:'fileToUpload',//file标签的id  
+        //         dataType: 'json',//返回数据的类型  
+        //         data:{name:'upfile'},//一同上传的数据  
+        //         success: function (data, status) {  
+        //             //把图片替换  
+        //             var obj = jQuery.parseJSON(data);  
+        //             $("#upload").attr("src", "http://img.nntzd.com/shop/"+obj.savename);  
+        //             if(typeof(data.error) != 'undefined') {  
+        //                 if(data.error != '') {  
+        //                 } else {  
+        //                 }  
+        //             }  
+        //         },  
+        //         error: function (data, status, e) {  
+        //              alert(data.error); 
+        //             alert(e);  
+        //         }  
+        //     });  
+        // });  
+        //删掉上传图片
+        $("#preview").delegate(".preview","click",function(){ 
+            $(this).remove(); 
+        }); 
+          // 小星星分数
+          var goodsMark='5.0分',deliveryMark='5.0分',serverMark='5.0分';
+          $('.goodsMark .rating-gly-star').on('click',function(){
+             var goodsMark = $(this).parent().find('.caption span').html();
+             goodsMark=parseFloat(goodsMark);
+             $('#toRev').attr('data-goodsMark',goodsMark);
+          })
+          $('.deliveryMark .rating-gly-star').on('click',function(){
+             var deliveryMark = $(this).parent().find('.caption span').html();
+             deliveryMark=parseFloat(deliveryMark);
+             $('#toRev').attr('data-deliveryMark',deliveryMark);
+          })
+          $('.serverMark .rating-gly-star').on('click',function(){
+             var serverMark = $(this).parent().find('.caption span').html();
+             serverMark=parseFloat(serverMark);
+             $('#toRev').attr('data-serverMark',serverMark);
+          })
+    });  
+    </script>
+    <!--通用分享-->
+    <include file="./Tpl/App/Shop_share.html" />
+</body>
+</html>

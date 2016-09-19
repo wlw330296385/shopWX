@@ -1,0 +1,95 @@
+<div class="row">
+	<div class="col-xs-12 col-md-12">
+		<div class="widget">
+			<div class="widget-header bg-blue">
+				<i class="widget-icon fa fa-arrow-down"></i>
+				<span class="widget-caption">统计管理</span>
+				<div class="widget-buttons">
+					<a href="#" data-toggle="maximize">
+						<i class="fa fa-expand"></i>
+					</a>
+					<a href="#" data-toggle="collapse">
+						<i class="fa fa-minus"></i>
+					</a>
+					<a href="#" data-toggle="dispose">
+						<i class="fa fa-times"></i>
+					</a>
+				</div>
+			</div>
+			<div class="widget-body">
+				<div class="table-toolbar">
+                    <div class="pull-right">
+                        <form id="App-search">
+                            <label style="margin-bottom: 0px;">日期筛选
+                            </label>
+                            <label style="margin-bottom: 0px;">
+                                <input name="ctime" type="search" class="form-control input-sm" value="" id="ctime">
+                            </label>
+                            <a href="{:U('Admin/Shop/orderCount/')}" class="btn btn-success search" data-loader="App-loader" data-loadername="订单统计" data-search="App-search">
+                                确定
+                            </a>
+                        </form>
+                    </div>
+				</div>
+				<h2>订单售出数量</h2>
+				<table id="App-table" class="table table-bordered table-hover">
+					<thead class="bordered-darkorange">
+							<th>品名</th>
+							<th>单价</th>
+							<th>售出数量</th>
+							<th>总金额</th>
+							<th width="250">备注</th>
+						</tr>
+					</thead>
+					<tbody>
+						<volist name="orderData" id="vo">
+							<tr>
+								<td class=" ">{$vo.goodsname}</td>
+								<td>{$vo.price}</td>
+								<td class=" ">{$vo.num}</td>
+								<td class=" "><?php echo  sprintf("%.2f", $vo['sum']);?></td>
+								<td class="">{$ctime}</td>
+							</tr>
+						</volist>						
+					</tbody>
+				</table>
+				<br>
+				<h2>会员关注-取消关注</h2>
+				<table id="App-table" class="table table-bordered table-hover">
+					<thead class="bordered-darkorange">
+							<th>会员登陆</th>
+							<th>会员关注量</th>
+							<th>会员取消关注量</th>
+							<th width="250">备注</th>
+						</tr>
+					</thead>
+					<tbody>
+							<tr>
+								<td class=" ">{$login}</td>
+								<td class=" ">{$regi}</td>
+								<td class=" ">{$quit}</td>
+								<td class="">{$ctime}</td>
+							</tr>					
+					</tbody>
+				</table>
+				<div class="row DTTTFooter">
+					{$page}
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<script src="__PUBLIC__/Admin/js/datetime/moment.js"></script>
+<script src="__PUBLIC__/Admin/js/datetime/daterangepicker.js"></script>
+<div id="tmpbread" style="display: none;">{$breadhtml}</div>
+<script type="text/javascript">
+	setBread($('#tmpbread').html());
+	$('#ctime').daterangepicker();
+</script>
+<!--/面包屑导航封装-->
+<!--全选特效封装/全部删除-->
+<script type="text/javascript">
+	//导出订单
+	
+</script>
+<!--/全选特效封装-->

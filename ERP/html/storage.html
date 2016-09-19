@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<title>小海家OA系统</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+
+		<!--标准mui.css-->
+		<link rel="stylesheet" href="../css/mui.min.css">
+		<!--App自定义的css-->
+		<link rel="stylesheet" type="text/css" href="../css/app.css" />
+		<style>
+			h5 {
+				margin: 5px 7px;
+			}
+		</style>
+	</head>
+
+	<body>
+		<div class="mui-content">
+			<div class="cbody">
+			<div class="mui-input-row">
+				<span>类型</span>
+			</div>
+			<div class="">
+				<select name="cid" id="cid">
+				</select>
+			</div>
+			<div class="mui-input-row">
+				<span>名称</span>
+			</div>
+			<div class="">
+				<select name="goodsname" id="gid">
+				</select>
+			</div>
+			<div class="mui-input-row">
+				<span>数量</span>
+			</div>
+			<div class="mui-input-row">
+				<input type="text" class="mui-input" id="num" placeholder="10">
+			</div>
+			<div class="mui-input-row">
+				<span>金额</span>
+			</div>
+			<div class="mui-input-row">
+				<input type="text" class="mui-input" id="price" placeholder="10">
+			</div>
+			<div class="mui-input-row">
+				<span>单位</span>
+			</div>
+			<div class="mui-input-row">
+				<input type="text" class="mui-input" id="dw" placeholder="瓶">
+			</div>
+			<div class="mui-input-row">
+				<span>备注</span>
+			</div>
+			<div class="mui-input-row" style="margin: 10px 5px;">
+				<textarea id="remark" rows="5" placeholder="多行输入"></textarea>
+			</div>
+			<input type="hidden" name="actoin" id="action" value="1">
+			<button class="mui-btn mui-btn-block" id="sbm">确定入库</button>
+		</div>
+		</div>
+	<script src="../js/mui.min.js"></script>
+	<script src="../js/jquery-2.0.3.min.js"></script>
+	<script type="text/javascript" charset="utf-8">
+
+	var cid=1;
+	var tourl='http://xhj.nntzd.com/ERP/Index/';
+	// var tourl='http://192.168.1.142/xhj_nntzd_com/ERP/Index/';
+	var btnArray = ['否', '是'];
+		$.ajax({
+			url:tourl+'GetGoodsInfo',
+			data:{
+				
+			},
+			dataType:'json',//服务器返回json格式数据
+			type:'post',//HTTP请求类型
+			timeout:10000,//超时时间设置为10秒；
+			headers:{'Content-Type':'application/json'},	              
+			success:function(data){
+				//服务器返回响应，根据响应结果，分析是否登录成功；
+				mui.each(data.cate,function(i,v){
+					var str='<option value="'+v.id+'">'+v.name+'</option>';
+					$('#cid').append(str);
+					cid=$('#cid option').eq(0).val();
+				})
+			}
+		}).done(function(){
+			$.ajax({
+				url:tourl+'GetGoodsInfo',
+				data:{
+					'cid':cid
+				},
+				dataType:'json',//服务器返回json格式数据
+				type:'get',//HTTP请求类型
+				timeout:10000,//超时时间设置为10秒；
+				headers:{'Content-Type':'application/json'},
+				success:function(data){
+					mui.each(data.goods,function(i,v){
+					var str='<option value="'+v.id+'">'+v.name+'</option>';
+					$('#gid').append(str);
+					cid=$('#gid option').eq(0).val();
+					})
+				}
+			})
+		});
+		$(function(){
+			$('#cid').change(function(){
+				mui("#cid option").each(function () {
+					if ($(this).attr('selected','selected')) {
+						cid=$(this).val();
+					}
+				})
+			})
+			$('#num').blur(function(){
+				var num=Number($(this).val()),gid=$('#gid').val();
+			})
+		})
+		
+		$('#sbm').on('click',function(){
+			var gid=$('#gid').val(),dw=$('#dw').val(),num=Number($('#num').val()),remark=$('#remark').val(),price=Number($('#price').val()),action=$('#action').val();
+			if (num=='') {
+				mui.alert('数量不能为空');return false;
+			}
+			if (price=='') {
+				mui.alert('金额不能为空');return false;
+			}
+			var pdata={'cid':cid,'gid':gid,'num':num,'dw':dw,'remark':remark,'price':price,'action':action};
+			$.post(tourl+"storage",{'data':pdata},function(msg){
+				if (msg.status==1) {
+					mui.confirm('确认返回首页', '入库成功', btnArray, function(e) {
+					if (e.index == 1) {
+						window.history.back();
+					} else {
+						return false;
+					}
+					})
+				}else{
+					mui.alert('入库失败');
+				}
+			},'json');
+		})
+	</script>
+	</body>
+	</html>

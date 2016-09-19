@@ -1,0 +1,29 @@
+ <div class="row">
+        <div class="col-md-12">
+                <form id="AppOrderFhkd" action="" method="post" class="form-horizontal"
+                                                  data-bv-message=""
+                                                  data-bv-feedbackicons-valid="glyphicon glyphicon-ok"
+                                                  data-bv-feedbackicons-invalid="glyphicon glyphicon-remove"
+                                                  data-bv-feedbackicons-validating="glyphicon glyphicon-refresh">
+                   <input type="hidden" name="id" value="{$cache.id}">                  
+                   <div class="form-group">
+                        <label class="col-lg-3 control-label">发货快递名称<sup>*</sup></label>
+                        <div class="col-lg-7">
+                        <select id="AppOrderFahuokd" name="fahuokd">
+                            <option value="百世快递" <eq name="cache.fahuokd" value="百世快递">selected</eq> >百世快递</option>
+                            <option value="中通" <eq name="cache.fahuokd" value="中通">selected</eq> >中通</option>
+                            <option value="圆通" <eq name="cache.fahuokd" value="圆通">selected</eq> >圆通</option>
+                        </select>
+                        	<!-- <input id="AppOrderFahuokd" type="text" class="form-control" name="fahuokd" value="百世快递"> -->
+                        </div>
+                   </div>
+                  <div class="form-group">
+                        <label class="col-lg-3 control-label">发货快递单号<sup>*</sup></label>
+                        <div class="col-lg-7">
+                        	<input id="AppOrderFahuokdnum" type="text" class="form-control" name="fahuokdnum" value="{$cache.fahuokdnum}">
+                        </div>
+                   </div>
+               </form>
+        </div>
+</div>
+

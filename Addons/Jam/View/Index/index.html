@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+    <title>58元辣椒酱免费抢</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta http-equiv="Content-Language" content="zh-CN" />
+    <meta name="Author" content="www.nntzd.com" />
+    <meta name="Copyright" content="www.nntzd.com" />
+    <meta name="keywords" content="www.nntzd.com" />
+    <meta name="description" content="www.nntzd.com" />
+    <link rel="stylesheet" type="text/css" href="__CSS__/style.css">
+    <script src="__JS__/jquery.min.js"></script>
+    <style type="text/css">
+        header{ margin-top: 0px }
+    </style>
+</head>
+
+<body>
+    <header>
+        <img src="__IMG__/header_img.JPG">
+        <img src="__IMG__/flag.gif">
+    </header>
+    <div class="title_1">
+        <empty name="winners">
+            <li><a href="#" target="_blank">目前还没人获得辣椒酱</a></li>
+        </empty>
+        <ul>
+            <foreach name="winners" item="vo">
+                <li><a href="#" target="_blank">{$vo.nickname}获得一瓶辣椒酱</a></li>
+            </foreach>
+        </ul>
+    </div>
+    <div class="txt">
+        <p>离下次开抢还有</p>
+        <p class="red big">
+            <span id="t_d">00时00分00秒</span></p>
+        <p><span class="red">{$num}</span>人可参与，<span class="red">{$winners|count}</span>人已抢到</p>
+        <gt name="left" value="0">
+            <p>你还差 <span class="red">{$left}</span> 人就可以得到辣椒酱了</p>
+            <p><a href="javascript:;" onclick="alert('请前往公众号点击菜单【邀请小伙伴】将二维码分享给朋友~')">赶快去召唤小伙伴</a></p>
+        </gt>
+    </div>
+    <div class="btn" disabled>
+        <eq name="btnColor" value="light"><img src="__IMG__/btn.gif" alt="按钮">
+            <else /><img src="__IMG__/btn_N.gif" alt="按钮"></eq>
+    </div>
+    <div class="title_2">
+        点击上方按钮领取
+    </div>
+    <div class="content">
+        <span class="red big">你有{$fricount}个小伙伴了↓</span>
+        <ul id="flist">
+            <!-- <li>
+                <div class="l"><img src="__IMG__/poi.jpg"></div>
+                <div class="clearfix r">
+                    <span class="l big">昵称:丝袜信哥</span>
+                    <span class="r big">时间:2016.6.24</span>
+                </div>
+            </li> -->
+        </ul>
+        <div class="clearfix"></div>
+        <!-- 点击调用加载更多事件 -->
+        <span class="big">点击加载更多</span>
+    </div>
+    <footer>
+        <img src="__IMG__/btm.gif" width="100%">
+    </footer>
+</body>
+<script type="text/javascript">
+function autoScroll(obj) {
+    $(obj).find("ul").animate({
+        marginTop: "-120px"
+    }, 500, function() {
+        $(this).css({
+            marginTop: "0px"
+        }).find("li:first").appendTo(this);
+    })
+}
+$(function() {
+    var nexttime = parseInt("{$nexttime}");
+
+    var _p = 1;
+    setInterval('autoScroll(".title_1")', 2000);
+
+    $('.btn').on('click', function() {
+        var _btn = $(this);
+        // 调用抽奖事件
+        $.getJSON("{:u_addons('Jam://App/Index/qiang')}", function(ret) {
+            if (ret.status == 1) {
+                $(".btn").find('img').attr('src', '__IMG__/btn_N.gif');
+                $(".btn").prop('disabled', false);
+            }
+            alert(ret.msg);
+        });
+    })
+
+    var td = $("#t_d");
+    if(nexttime>=9999){
+        td.html('还未开始<br/>每天中午12点开抢');
+    }else{
+        var interval = setInterval(function() {
+            var h = gettime(Math.floor(nexttime / 3600));
+            var m = gettime(Math.floor(nexttime % 3600 / 60));
+            var s = gettime(Math.floor(nexttime % 60));
+            var str = h + "时" + m + "分" + s + "秒";
+            td.text(str);
+            if (nexttime == 0) {
+                clearInterval(interval);
+            }
+            nexttime--;
+        }, 1000);
+    }
+    
+
+    function gettime(number) {
+        return number > 9 ? number : '0' + number;
+    }
+
+    $(".big").on("click", function() {
+        getFriends(_p);
+    });
+
+    function getFriends(p) {
+        var fstr = '';
+        var obj = {
+            p: p
+        };
+        $.getJSON("{:u_addons('Jam://App/Index/getMyFriends')}", obj, function(ret) {
+            if (ret) {
+                _p++;
+                $.each(ret, function(i, el) {
+                    console.log(el['headimgurl']);
+                    fstr += '<li><div class="l"><img src="' + el['headimgurl'] + '"></div><div class="clearfix r"><span class="l big">昵称:' + el['nickname'] + '</span><span class="r big">时间:' + el['st'] + '</span></div></li>';
+                });
+                console.log(fstr);
+                $("#flist").append(fstr);
+
+            }
+        });
+        console.log(fstr);
+    }
+
+    getFriends(_p);
+
+    function getLocalTime(nS) {
+        return new Date(parseInt(nS) * 1000).toLocaleString().replace(/年|月/g, "-").replace(/日/g, " ");
+    }
+})
+</script>
+<script>
+function onBridgeReady() {
+    WeixinJSBridge.call('hideOptionMenu');
+}
+
+if (typeof WeixinJSBridge == "undefined") {
+    if (document.addEventListener) {
+        document.addEventListener('WeixinJSBridgeReady', onBridgeReady, false);
+    } else if (document.attachEvent) {
+        document.attachEvent('WeixinJSBridgeReady', onBridgeReady);
+        document.attachEvent('onWeixinJSBridgeReady', onBridgeReady);
+    }
+} else {
+    onBridgeReady();
+}
+</script>
+
+</html>
